@@ -100,12 +100,4 @@ if __name__ == '__main__':
 
     business_list, review_list, user_list = load_data(datafile)
 
-    print('businesses')
-    for business in business_list:
-        print('type: %s, id: %s' % (business['type'], business['business_id']))
-
-    print('reviews')
-    for review in review_list:
-        print('type: %s, id: %s' % (review['type'], review['business_id']))
-
     clean_tweets, clean_tweets_sentiment = read_tweets(tweetsfile, tweetsfile_clean)
