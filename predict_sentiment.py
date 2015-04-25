@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import cPickle as pickle
+import numpy as np
 import pandas as pd
 
 from utils import load_imdb_data
@@ -10,18 +11,18 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import roc_auc_score
 from time import time
 
-retrain = True
-train = pd.read_csv('labeledTrainData.tsv', header=0, delimiter='\t', quoting=3)
-
-clean_train_reviews = load_imdb_data('cleaned.pickle')
-
-vectorizer = CountVectorizer(analyzer='word',
-                             tokenizer=None,
-                             preprocessor=None,
-                             stop_words=None,
-                             max_features=5000)
-
+retrain = False
 if retrain:
+    train = pd.read_csv('labeledTrainData.tsv', header=0, delimiter='\t', quoting=3)
+
+    clean_train_reviews = load_imdb_data('cleaned.pickle')
+
+    vectorizer = CountVectorizer(analyzer='word',
+                                 tokenizer=None,
+                                 preprocessor=None,
+                                 stop_words=None,
+                                 max_features=5000)
+
     train_data_features = vectorizer.fit_transform(clean_train_reviews)
     train_data_features = train_data_features.toarray()
 
@@ -48,12 +49,26 @@ else:
         forest = pickle.load(mfile)
         vectorizer = pickle.load(vfile)
 
-print('predicting on training set...')
-train_pred = forest.predict(train_data)
-train_score = roc_auc_score(train_labels, train_pred)
-print('train score = %.6f' % (train_score))
+if False:
+    print('predicting on training set...')
+    train_pred = forest.predict(train_data)
+    train_score = roc_auc_score(train_labels, train_pred)
+    print('train score = %.6f' % (train_score))
 
-print('predicting on validation set...')
-val_pred = forest.predict(val_data)
-val_score = roc_auc_score(val_labels, val_pred)
-print('validation score = %.6f' % (val_score))
+    print('predicting on validation set...')
+    val_pred = forest.predict(val_data)
+    val_score = roc_auc_score(val_labels, val_pred)
+    print('validation score = %.6f' % (val_score))
+
+university_name = 'rpi'
+with open('data/%s.pickle' % (university_name)) as ifile:
+    all_list = pickle.load(ifile)
+
+    print('predicting on %s set...' % university_name)
+    for thread in all_list:
+        submission, comments = thread[0], thread[1]
+        data = np.vstack([submission] + comments).flatten()
+        data_features = vectorizer.transform(data).toarray()
+        univ_pred = forest.predict(data_features)
+        for post, pred in zip(data, univ_pred):
+            print('%s: %d' % (post, pred))
