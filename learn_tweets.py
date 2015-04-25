@@ -18,7 +18,7 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
                                  tokenizer=None,
                                  preprocessor=None,
                                  stop_words=None,
-                                 max_features=5000)
+                                 max_features=2500)
 
     # compute the bag-of-words model on the data
     clean_tweets_features = vectorizer.fit_transform(clean_tweets).toarray()
@@ -67,4 +67,5 @@ if __name__ == '__main__':
     clean_tweets, clean_tweets_sentiments = read_tweets(datafile, tweetsfile)
 
     num_tweets = 10000
+    random_indices = np.random.choice(len(clean_tweets), size=num_tweets, replace=False)
     learn_sentiment_from_tweets(clean_tweets[:num_tweets], clean_tweets_sentiments[:num_tweets], modelfile, retrain=True)
