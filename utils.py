@@ -33,6 +33,13 @@ def load_data(datafile):
     return business_list, review_list, user_list
 
 
+def load_imdb_data(filename):
+    with open(filename, 'rb') as ifile:
+        clean_data_reviews = pickle.load(ifile)
+
+    return clean_data_reviews
+
+
 # remove markup, stopwords, etc. from tweets
 def tweet_to_words(tweet, min_length):
     tweet_text = BeautifulSoup(tweet).get_text()
