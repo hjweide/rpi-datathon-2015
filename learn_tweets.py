@@ -46,7 +46,7 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
             pickle.dump(vectorizer, vfile)
     else:
         print('loading random forest...')
-        with open(modelfile, 'rb') as mfile, open(vectorfile, 'wb') as vfile:
+        with open(modelfile, 'rb') as mfile, open(vectorfile, 'rb') as vfile:
             forest = pickle.load(mfile)
             vectorizer = pickle.load(vfile)
 
