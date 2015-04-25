@@ -66,6 +66,9 @@ if __name__ == '__main__':
     modelfile = join(root, 'data', 'model.pickle')
     clean_tweets, clean_tweets_sentiments = read_tweets(datafile, tweetsfile)
 
+    clean_tweets = np.array(clean_tweets)
+    clean_tweets_sentiments = np.array(clean_tweets_sentiments)
+
     num_tweets = 10000
-    random_indices = np.random.choice(len(clean_tweets), size=num_tweets, replace=False)
-    learn_sentiment_from_tweets(clean_tweets[:num_tweets], clean_tweets_sentiments[:num_tweets], modelfile, retrain=True)
+    random_indices = np.random.choice(clean_tweets.shape[0], size=num_tweets, replace=False)
+    learn_sentiment_from_tweets(clean_tweets[random_indices], clean_tweets_sentiments[random_indices], modelfile, retrain=True)
