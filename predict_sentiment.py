@@ -36,9 +36,9 @@ def predict_sentiment_posts(thread_list, model, vectorizer):
 
 
 if __name__ == '__main__':
-    with open('model.pickle', 'rb') as ifile:
+    with open(join('data', 'model.pickle'), 'rb') as ifile:
         model = pickle.load(ifile)
-    with open('vectorizer.pickle', 'rb') as ifile:
+    with open(join('data', 'vectorizer.pickle'), 'rb') as ifile:
         vectorizer = pickle.load(ifile)
 
     university_names = ['mit', 'usc', 'uiuc', 'rpi']
