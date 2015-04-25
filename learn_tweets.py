@@ -65,5 +65,6 @@ if __name__ == '__main__':
     tweetsfile = join(root, 'data', 'tweets_clean.pickle')
     modelfile = join(root, 'data', 'model.pickle')
     clean_tweets, clean_tweets_sentiments = read_tweets(datafile, tweetsfile)
-    print clean_tweets[:20]
-    #learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile, retrain=True)
+
+    num_tweets = 10000
+    learn_sentiment_from_tweets(clean_tweets[:num_tweets], clean_tweets_sentiments[:num_tweets], modelfile, retrain=True)
