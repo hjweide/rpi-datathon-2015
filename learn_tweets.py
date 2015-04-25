@@ -18,7 +18,7 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
                                  tokenizer=None,
                                  preprocessor=None,
                                  stop_words=None,
-                                 max_features=1000)
+                                 max_features=5000)
 
     # compute the bag-of-words model on the data
     clean_tweets_features = vectorizer.fit_transform(clean_tweets).toarray()
@@ -26,7 +26,7 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
     vocab = vectorizer.get_feature_names()  # NOQA
 
     # split into training and validation data
-    kf = StratifiedKFold(clean_tweets_sentiment, round(1. / 0.2))
+    kf = StratifiedKFold(clean_tweets_sentiments, round(1. / 0.2))
     train_indices, valid_indices = next(iter(kf))
 
     train_data = clean_tweets_features[train_indices]
@@ -61,8 +61,9 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
 
 if __name__ == '__main__':
     root = getcwd()
-    datafile = join(root, 'data', 'tweets_clean_short.csv')
-    tweetsfile = join(root, 'data', 'tweets_clean_short.pickle')
+    datafile = join(root, 'data', 'tweets_clean.csv')
+    tweetsfile = join(root, 'data', 'tweets_clean.pickle')
     modelfile = join(root, 'data', 'model.pickle')
-    clean_tweets, clean_tweets_sentiment = read_tweets(datafile, tweetsfile)
-    learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiment, modelfile, retrain=False)
+    clean_tweets, clean_tweets_sentiments = read_tweets(datafile, tweetsfile)
+    print len(clean_tweets), len(clean_tweets_sentiments)
+    #learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile, retrain=True)

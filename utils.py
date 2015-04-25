@@ -34,7 +34,7 @@ def load_data(datafile):
 
 
 # remove markup, stopwords, etc. from tweets
-def tweet_to_words(tweet):
+def tweet_to_words(tweet, min_length):
     tweet_text = BeautifulSoup(tweet).get_text()
     letters_only = re.sub('[^a-zA-Z]', ' ', tweet_text)
 
@@ -46,15 +46,18 @@ def tweet_to_words(tweet):
 
     meaningful_words = [w for w in words if w not in stops]
 
-    return ' '.join(meaningful_words)
+    if len(meaningful_words) >= min_length:
+        return ' '.join(meaningful_words)
+    return None
 
 
 # read tweets from the csv file
-def read_tweets(datafile, filename):
+def read_tweets(datafile, filename, min_length=0):
     # check if we have already saved this file to disk to save computation
     if not exists(filename):
         # some lines are bad, just skip them
         data = pd.read_csv(datafile, header=0, delimiter=',', quotechar='"', error_bad_lines=False, encoding='utf-8-sig')
+
         num_tweets = data['ItemID'].size
         print('cleaned tweets will be saved to %s' % (filename))
         clean_tweets, clean_tweets_sentiment = [], []
@@ -63,10 +66,11 @@ def read_tweets(datafile, filename):
             if (i + 1) % 1000 == 0:
                 print('  cleaning tweet %d of %d' % (i + 1, num_tweets))
 
-            clean_tweet = tweet_to_words(data['SentimentText'][i])
-            clean_tweet_sentiment = data['Sentiment'][i]
-            clean_tweets.append(clean_tweet)
-            clean_tweets_sentiment.append(clean_tweet_sentiment)
+            clean_tweet = tweet_to_words(data['SentimentText'][i], min_length)
+            if clean_tweet is not None:
+                clean_tweet_sentiment = data['Sentiment'][i]
+                clean_tweets.append(clean_tweet)
+                clean_tweets_sentiment.append(clean_tweet_sentiment)
 
         # save the cleaned tweets to disk for future use
         with open(filename, 'wb') as ofile:
@@ -84,8 +88,8 @@ def read_tweets(datafile, filename):
 if __name__ == '__main__':
     root = getcwd()
     datafile = join(root, 'data', 'dummy.txt')
-    tweetsfile = join(root, 'data', 'tweets_short.csv')
-    tweetsfile_clean = join(root, 'data', 'tweets_clean_short.pickle')
+    tweetsfile = join(root, 'data', 'tweets.csv')
+    tweetsfile_clean = join(root, 'data', 'tweets_clean.pickle')
 
     business_list, review_list, user_list = load_data(datafile)
 
@@ -98,5 +102,5 @@ if __name__ == '__main__':
         print('type: %s, id: %s' % (review['type'], review['business_id']))
 
     clean_tweets, clean_tweets_sentiment = read_tweets(tweetsfile, tweetsfile_clean)
-    print clean_tweets
-    print clean_tweets_sentiment
+    #print clean_tweets
+    #print clean_tweets_sentiment
