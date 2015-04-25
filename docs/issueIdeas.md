@@ -10,6 +10,8 @@
 
 - Some "double-barrell" evaluation, like "I like golf and craft beer"
 
+- Okay here is a rough idea.  We parse the review and try to match the text to high ratings or low ratings to get "happy" words and "unhappy" words.  We could do the same for the IMDB reviews if we do not have enough data.  Then we parse each school's social media: reddit/facebook/twitter/collegeconfidential/etc and try to determine if the words we find there align better to unhappy or happy words, thereby trying to rank schools based on the happiness of students
+
 ## Some Python Modules
 - `NLTK`
 - `sklearn`'s `RandomForests`
