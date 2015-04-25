@@ -8,8 +8,8 @@ import re
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 
-user_agent = 'scraping-reddit-h1'
-university_name = 'cornell'
+user_agent = 'scraping-reddit-k2'
+university_name = 'uiuc'
 
 
 def unix_to_edt(unix_time):
