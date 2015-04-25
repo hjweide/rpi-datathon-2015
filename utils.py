@@ -109,5 +109,3 @@ if __name__ == '__main__':
         print('type: %s, id: %s' % (review['type'], review['business_id']))
 
     clean_tweets, clean_tweets_sentiment = read_tweets(tweetsfile, tweetsfile_clean)
-    #print clean_tweets
-    #print clean_tweets_sentiment
