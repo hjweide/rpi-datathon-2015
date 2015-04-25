@@ -34,7 +34,7 @@ def clean_post(raw_text):
 target_subreddit = university_name
 r = praw.Reddit(user_agent=user_agent)
 sub = r.get_subreddit(target_subreddit)
-submissions = sub.get_top_from_year(limit=None)
+submissions = sub.get_top_from_year(limit=3000)
 
 all_list = []
 for submission in submissions:
