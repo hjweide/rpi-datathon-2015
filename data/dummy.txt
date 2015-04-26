@@ -1,5 +1,0 @@
-{"type": "business", "business_id": "0"}
-{"type": "business", "business_id": "1"}
-{"type": "review", "business_id": "0"}
-{"type": "business", "business_id": "2"}
-{"type": "review", "business_id": "1"}
