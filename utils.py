@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import cPickle as pickle
-import json
 import pandas as pd
 import re
 
@@ -9,35 +8,6 @@ from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from os import getcwd
 from os.path import exists, join
-
-
-# loads a file containing one json object per line,
-# similar to the Yelp academic dataset
-def load_data(datafile):
-    business_list, review_list, user_list = [], [], []
-    with open(datafile, 'r') as ifile:
-        for line in ifile:
-            # if the json has single quotes
-            # line = line.replace("'", '"')
-            json_obj = json.loads(line)
-            json_obj_type = json_obj['type']
-            if json_obj_type == 'business':
-                business_list.append(json_obj)
-            elif json_obj_type == 'review':
-                review_list.append(json_obj)
-            elif json_obj_type == 'user':
-                user_list.append(json_obj)
-            else:
-                print('json object of unknown type: %s' % (json_obj_type))
-
-    return business_list, review_list, user_list
-
-
-def load_imdb_data(filename):
-    with open(filename, 'rb') as ifile:
-        clean_data_reviews = pickle.load(ifile)
-
-    return clean_data_reviews
 
 
 # remove markup, stopwords, etc. from tweets
@@ -62,7 +32,7 @@ def tweet_to_words(tweet, min_length):
 def read_tweets(datafile, filename, min_length=0):
     # check if we have already saved this file to disk to save computation
     if not exists(filename):
-        # some lines are bad, just skip them
+        # some lines are bad, just skip them (we have enough tweets already!)
         data = pd.read_csv(datafile, header=0, delimiter=',', quotechar='"', error_bad_lines=False, encoding='utf-8-sig')
 
         num_tweets = data['ItemID'].size
@@ -94,10 +64,7 @@ def read_tweets(datafile, filename, min_length=0):
 # example usage
 if __name__ == '__main__':
     root = getcwd()
-    datafile = join(root, 'data', 'dummy.txt')
     tweetsfile = join(root, 'data', 'tweets.csv')
     tweetsfile_clean = join(root, 'data', 'tweets_clean.pickle')
-
-    business_list, review_list, user_list = load_data(datafile)
 
     clean_tweets, clean_tweets_sentiment = read_tweets(tweetsfile, tweetsfile_clean)

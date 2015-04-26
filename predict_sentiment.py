@@ -7,26 +7,28 @@ import numpy as np
 from collections import defaultdict
 from os.path import join
 
+months = {'01': 'Jan 15',
+          '02': 'Feb 15',
+          '03': 'Mar 15',
+          '04': 'Apr 15',
+          '05': 'May 14',
+          '06': 'Jun 14',
+          '07': 'Jul 14',
+          '08': 'Aug 14',
+          '09': 'Sep 14',
+          '10': 'Oct 14',
+          '11': 'Nov 14',
+          '12': 'Dec 14'}
 
-months = {'01': 'Jan',
-          '02': 'Feb',
-          '03': 'Mar',
-          '04': 'Apr',
-          '05': 'May',
-          '06': 'Jun',
-          '07': 'Jul',
-          '08': 'Aug',
-          '09': 'Sep',
-          '10': 'Oct',
-          '11': 'Nov',
-          '12': 'Dec'}
 
-
+# given a trained model and words-to-feature encoder, returns the predicted sentiment
+# of each submission/comment in that subreddit for each month
 def predict_sentiment_posts(thread_list, model, vectorizer):
     sentiment_dict = defaultdict(list)
     for thread in thread_list:
         submission, comments, date, ups = thread
         month = date.split(',')[1]
+        # some submissions don't have any comments
         if len(comments) > 0:
             data = np.vstack([submission] + comments).flatten()
         else:
@@ -38,22 +40,10 @@ def predict_sentiment_posts(thread_list, model, vectorizer):
         for p in pred:
             sentiment_dict[month].append(p)
 
-        #if len(comments) > 0:
-        #    title_weight = 0.1
-        #    title_sentiment = title_weight * pred[0]
-        #    non_title_sentiment = (1 - title_weight) * np.mean(pred[1:])
-        #    #title_sentiment = 0
-        #    #non_title_sentiment = np.mean(pred)
-        #else:
-        #    title_sentiment = pred[0]
-        #    non_title_sentiment = 0
-
-        #thread_sent = title_sentiment + non_title_sentiment
-        #sentiment_list.append(thread_sent)
-
     return sentiment_dict
 
 
+# plot the bar graph of positive and negative sentiment for each month
 def plot_bars(values_list, key_list, title, filename):
     N = len(values_list)
     ind = np.arange(N)
@@ -73,18 +63,19 @@ def plot_bars(values_list, key_list, title, filename):
     ax.set_xticklabels(key_list)
     ax.legend(plots, ['positive', 'negative'])
 
-    #plt.show()
     plt.savefig(filename, bbox_inches='tight')
 
 
 if __name__ == '__main__':
+    # load the pre-trained model
     with open(join('data', 'model.pickle'), 'rb') as ifile:
         model = pickle.load(ifile)
+    # load the pre-trained words-to-feature encoder
     with open(join('data', 'vectorizer.pickle'), 'rb') as ifile:
         vectorizer = pickle.load(ifile)
 
-    university_names = ['mit', 'usc', 'uiuc', 'rpi', 'rit', 'uwaterloo']
-    #university_names = ['mit']
+    # the names of each university's subreddit
+    university_names = ['mit', 'usc', 'uiuc', 'rpi', 'rit', 'uwaterloo', 'cornell', 'UTAustin', 'ucla']
     for university in university_names:
         key_list, sentiment_list = [], []
         print('processing %s' % university)
@@ -93,9 +84,9 @@ if __name__ == '__main__':
             sentiment_dict = predict_sentiment_posts(post_list, model, vectorizer)
             for key in sorted(sentiment_dict):
                 total = len(sentiment_dict[key])
-                positives = float(sentiment_dict[key].count(1)) / total
-                negatives = float(sentiment_dict[key].count(0)) / total
+                positives = sentiment_dict[key].count(1)
+                negatives = sentiment_dict[key].count(0)
                 sentiment_list.append((positives, negatives))
                 key_list.append(months[key])
-                print('  %s: %.5f %.5f' % (months[key], positives, negatives))
+                print('  %s: %d %d' % (months[key], positives, negatives))
             plot_bars(sentiment_list, key_list, university, join('plots', '%s.png' % university))
