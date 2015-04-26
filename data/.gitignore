@@ -1,0 +1,7 @@
+# ignore vim's swap files
+*.swp
+*.pyc
+*.png
+*.pickle
+*.csv
+*.tsv
