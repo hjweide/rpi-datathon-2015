@@ -1,7 +1,7 @@
 # rpi-datathon-2015
 ## Background
 Our code for the Datathon hosted by RPI's IDEA Lab and College Factual
-on the 25th April 2015.  Teams were free to investigate any issue
+on the 25th of April 2015.  Teams were free to investigate any issue
 related to North American universities and their surrounding areas.
 
 ## Investigation
