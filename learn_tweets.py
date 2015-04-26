@@ -13,6 +13,7 @@ from time import time
 from utils import read_tweets
 
 
+# train a RandomForestClassifier on a dataset of tweets labeled with positive or negative sentiment
 def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile, vectorfile, retrain=False):
     vectorizer = CountVectorizer(analyzer='word',
                                  tokenizer=None,
@@ -34,6 +35,7 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
     valid_data = clean_tweets_features[valid_indices]
     valid_labels = clean_tweets_sentiments[valid_indices]
 
+    # only retrain the model when requested, to save time
     if retrain:
         print('training random forest...')
         forest = RandomForestClassifier(n_estimators=100)
@@ -50,11 +52,13 @@ def learn_sentiment_from_tweets(clean_tweets, clean_tweets_sentiments, modelfile
             forest = pickle.load(mfile)
             vectorizer = pickle.load(vfile)
 
+    # evaluate the model on the training set
     print('predicting on training set...')
     train_pred = forest.predict(train_data)
     train_score = roc_auc_score(train_labels, train_pred)
     print('train score = %.6f' % (train_score))
 
+    # evaluate the model on the held-out validation set
     print('predicting on validation set...')
     valid_pred = forest.predict(valid_data)
     valid_score = roc_auc_score(valid_labels, valid_pred)
@@ -65,6 +69,8 @@ if __name__ == '__main__':
     root = getcwd()
     datafile = join(root, 'data', 'tweets_clean.csv')
     tweetsfile = join(root, 'data', 'tweets_clean.pickle')
+
+    # where to save the trained model and words-to-feature encoder
     modelfile = join(root, 'data', 'model.pickle')
     vectorfile = join(root, 'data', 'vectorizer.pickle')
     clean_tweets, clean_tweets_sentiments = read_tweets(datafile, tweetsfile)
@@ -72,6 +78,7 @@ if __name__ == '__main__':
     clean_tweets = np.array(clean_tweets)
     clean_tweets_sentiments = np.array(clean_tweets_sentiments)
 
+    # because we cannot train on all the tweets, select a random subset here
     num_tweets = 5000
     random_indices = np.random.choice(clean_tweets.shape[0], size=num_tweets, replace=False)
     learn_sentiment_from_tweets(clean_tweets[random_indices], clean_tweets_sentiments[random_indices], modelfile, vectorfile, retrain=True)
